@@ -1,0 +1,46 @@
+<header class="d-flex justify-content-center mt-3">
+  <h1>Ng Calendar</h1>
+</header>
+
+<section class="container">
+  <div class="row justify-content-center month-buttons">
+    <!--<button mat-raised-button color="accent" (click)="goToPrevious()" [disabled]='shouldDisablePrev'>-->
+      <!--<fa [name]="faChevronLeft"></fa>-->
+    <!--</button>-->
+    <button mat-raised-button disabled class="col-md-5 text-capitalize">{{currentMonthYear}}</button>
+    <!--<button mat-raised-button color="accent" (click)="goToNext()" [disabled]='shouldDisableNext'>-->
+      <!--<fa [name]="faChevronRight"></fa>-->
+    <!--</button>-->
+  </div>
+
+  <div class="border border-light">
+    <div class="row week-header">
+      <label *ngFor="let day of weekDays" class="col">{{day}}</label>
+    </div>
+
+    <div class="row seven-cols calendar-wrapper">
+      <mat-card *ngFor="let day of days; let i = index" class="col-day"
+        [ngClass]="{
+          'weekend': i % 7 === 0 || i % 7 === 6
+        }">
+        <mat-card-header>
+          <mat-card-title
+            [ngClass]="{
+              'text-muted': day.getMonth() != selectedMonth.getMonth(),
+              'text-info': !(day.getMonth() != selectedMonth.getMonth()) && (i % 7 === 0 || i % 7 === 6)
+            }">{{day.getDate()}}</mat-card-title>
+          <mat-card-subtitle></mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-chip-list #chipList>
+            <mat-chip *ngIf="day.events >= 1">
+              {{day.events}}
+            </mat-chip>
+          </mat-chip-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+</section>
+

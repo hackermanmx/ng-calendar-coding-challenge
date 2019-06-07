@@ -1,3 +1,4 @@
+@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
 @import '~bootstrap/scss/bootstrap-reboot';
 @import '~bootstrap/scss/bootstrap-grid';
 @import '~bootstrap/scss/bootstrap';
@@ -11,4 +12,33 @@
 
 label {
   margin-bottom: 0;
+}
+
+@media (min-width: 320px){
+  .seven-cols .col-day,
+  .seven-cols .col-sm-1,
+  .seven-cols .col-lg-1  {
+    width: 100%;
+    *width: 100%;
+    min-height: 50px;
+  }
+
+  .week-header {
+    display: none;
+  }
+}
+
+// width = 100% / 7 column-number = 14.285714285714285714285714285714%
+@media (min-width: 768px) {
+  .week-header {
+    display: flex;
+  }
+
+  .seven-cols .col-day,
+  .seven-cols .col-sm-1,
+  .seven-cols .col-lg-1 {
+    width: 14.285714285714285714285714285714%;
+    min-height: 75px;
+    *width: 14.285714285714285714285714285714%;
+  }
 }

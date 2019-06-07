@@ -1,0 +1,59 @@
+.container{
+  padding-top:20px;
+}
+
+.month-buttons{
+  padding-bottom: 20px;
+}
+
+.mat-card {
+  padding: 0;
+  border-radius: 0;
+}
+
+.week-header {
+  background-color: #2e74b5;
+  color: white;
+  label {
+    text-align: center;
+  }
+}
+
+.calendar-wrapper {
+  .weekend {
+    background-color: #f1f1f1;
+  }
+  .text-muted {
+    color: #afb8bf !important;
+  }
+
+  .mat-card {
+    box-shadow: 0 2px 0px -9px rgba(0,0,0,.5), 0 1px 1px 0 rgba(0,0,0,.35), 0 1px 3px 0 rgba(0,0,0,.12);
+    cursor: pointer;
+
+    background-position: center;
+    transition: background 0.8s;
+
+    &:hover {
+      background: #47a7f5 radial-gradient(circle, transparent 1%, #47a7f5 1%) center/15000%;
+
+      .mat-card-header {
+        .mat-card-title {
+          color: white !important;
+        }
+      }
+    }
+
+    &:active {
+      background-color: #6eb9f7;
+      background-size: 100%;
+      transition: background 0s;
+    }
+  }
+
+  .mat-card-header {
+    .mat-card-title {
+      font-size: .8rem;
+    }
+  }
+}
