@@ -16,11 +16,13 @@ import {
   MatCardModule,
   MatButtonModule,
   MatRippleModule,
+  MatSnackBarModule,
   MatDialogModule, MatDialogRef, MAT_DIALOG_DATA
 } from '@angular/material';
 
 import {DialogComponent} from './dialog/dialog.component';
 import {CoreService} from '../services/core.service';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   imports: [
@@ -39,18 +41,22 @@ import {CoreService} from '../services/core.service';
     MatInputModule,
     MatDividerModule,
     MatDialogModule,
+    MatSnackBarModule,
     AngularFontAwesomeModule,
     FormsModule,
     ReactiveFormsModule,
   ],
   declarations: [
-    DialogComponent
+    DialogComponent,
+    ConfirmDialogComponent
   ],
   entryComponents: [
-    DialogComponent
+    DialogComponent,
+    ConfirmDialogComponent
   ],
   exports: [
     DialogComponent,
+    ConfirmDialogComponent,
     CommonModule,
     MatCardModule,
     MatButtonModule,
@@ -64,6 +70,7 @@ import {CoreService} from '../services/core.service';
     MatInputModule,
     MatDividerModule,
     MatDialogModule,
+    MatSnackBarModule,
     AngularFontAwesomeModule
   ],
   providers: [

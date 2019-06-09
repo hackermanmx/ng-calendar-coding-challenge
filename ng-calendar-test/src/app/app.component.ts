@@ -1,13 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {DialogComponent} from './common/dialog/dialog.component';
-import {
-format, subMonths, addMonths, getMonth,
-addDays, endOfMonth, startOfYear, endOfYear,
-getYear, getDay, setMonth, getDaysInMonth,
-startOfDay, subHours, addHours, subDays
-} from 'date-fns';
-import {CoreService} from "./services/core.service";
+import {format, getMonth} from 'date-fns';
+import {CoreService} from './services/core.service';
+import {ConfirmDialogComponent} from './common/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -32,6 +29,7 @@ export class AppComponent implements OnInit {
     isEdit: false
   };
   lastEvent = null;
+  snackbarFormat = 'MMMM DD';
 
   static sortEvents(a, b) {
     a = new Date(a.form.date).getTime();
@@ -39,7 +37,8 @@ export class AppComponent implements OnInit {
     return a - b;
   }
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog,
+              public _snackBar: MatSnackBar) { }
 
   ngOnInit() {
     const currentDate = new Date();
@@ -89,27 +88,28 @@ export class AppComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.form) {
         const eventDate = new Date(result.form.date);
-        let findDateIndex;
+        let findDateIndex, evts, lastEvt, msg;
         if (result.form.isEdit) {
-          // check if date changed
+          // check if date changed when edited
           findDateIndex = this.calendar.findIndex(i => i.events.findIndex(o => o.id === this.lastEvent.event.id) > -1);
-          if (new Date(this.lastEvent.date).getDate() === eventDate.getDate()) {
-            console.log(1);
-            // this.calendar[findDateIndex].events.sort(AppComponent.sortEvents);
-          } else {
-            console.log(2);
+          if (new Date(this.lastEvent.date).getDate() !== eventDate.getDate()) {
             const findNewDateIndex = this.findDateOfEvent(eventDate);
             this.calendar[findDateIndex].events.splice(this.lastEvent.index, 1);
             this.calendar[findNewDateIndex].events.push(result);
           }
+          evts = this.calendar[findDateIndex].events;
+          lastEvt = evts[evts.length - 1];
+          msg = `Reminder "${lastEvt.form.reminder}" in ${format(lastEvt.form.date, this.snackbarFormat)} is updated`;
+          this.showNotification(msg, 'Saved');
 
         } else {
-
           findDateIndex = this.findDateOfEvent(eventDate);
-
           if (findDateIndex > -1) {
             this.calendar[findDateIndex].events.push(result);
-            // this.calendar[findDateIndex].events.sort(AppComponent.sortEvents);
+            evts = this.calendar[findDateIndex].events;
+            lastEvt = evts[evts.length - 1];
+            msg = `A Reminder "${lastEvt.form.reminder}" is set for ${format(lastEvt.form.date, this.snackbarFormat)}`;
+            this.showNotification(msg, 'Added');
           }
         }
 
@@ -133,6 +133,26 @@ export class AppComponent implements OnInit {
 
   removeEvent(cIndex: number, evtIndex: number) {
     this.calendar[cIndex].events.splice(evtIndex, 1).sort(AppComponent.sortEvents);
+  }
+
+  openConfirmDialog(index: number) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '250px',
+      data: { index }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.calendar[result.index].events.length = 0;
+        const msg = `Reminders removed for ${format(this.calendar[result.index].date, this.snackbarFormat)}`;
+        this.showNotification(msg, 'Deleted');
+      }
+    });
+  }
+
+  showNotification(message: string, action: string) {
+    this._snackBar.open(message, action, {
+      duration: 3000,
+    });
   }
 
   // goToPrevious() {

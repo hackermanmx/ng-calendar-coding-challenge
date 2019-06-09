@@ -31,9 +31,9 @@
     </mat-form-field>
   </form>
 </div>
-<div mat-dialog-actions class="d-flex justify-content-between"
-  [ngClass]="{'justify-content-between': data.form.isEdit, 'justify-content-end': !data.form.isEdit}">
+<div mat-dialog-actions class="d-flex"
+  [ngClass]="{'justify-content-between': !data.form.isEdit, 'justify-content-end': data.form.isEdit}">
   <button *ngIf="!data.form.isEdit" mat-raised-button class="mat-warn" (click)="onCancel(f)">Cancel</button>
   <button mat-stroked-button [mat-dialog-close]="data"
-          [disabled]="!f.valid">{{data.form.isEdit ? 'Done' : 'Add'}}</button>
+          [disabled]="!f.valid || isQuerying">{{data.form.isEdit ? 'Done' : 'Add'}}</button>
 </div>
