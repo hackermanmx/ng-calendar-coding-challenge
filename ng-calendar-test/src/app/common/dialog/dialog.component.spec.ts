@@ -16,7 +16,7 @@ import {
   MatDialogModule,
   MatDialog
 } from '@angular/material';
-import {BrowserDynamicTestingModule} from "@angular/platform-browser-dynamic/testing";
+import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/testing';
 
 xdescribe('DialogComponent', () => {
   let dialog: MatDialog;
@@ -74,7 +74,7 @@ xdescribe('DialogComponent', () => {
 
   describe('passing in data', () => {
     it('should be able to pass in data', () => {
-      let config = {
+      const config = {
         data: {
           form: {
             id: null,
@@ -87,7 +87,7 @@ xdescribe('DialogComponent', () => {
         }
       };
 
-      let instance = dialog.open(DialogComponent, config).componentInstance;
+      const instance = dialog.open(DialogComponent, config).componentInstance;
 
       expect(instance.data.reminder).toBe(config.data.form.reminder);
       expect(instance.data.date).toBe(config.data.form.date);
@@ -97,7 +97,7 @@ xdescribe('DialogComponent', () => {
 
     it('should default to null if no data is passed', () => {
       expect(() => {
-        let dialogRef = dialog.open(DialogComponent);
+        const dialogRef = dialog.open(DialogComponent);
         expect(dialogRef.componentInstance.data).toBeNull();
       }).not.toThrow();
     });

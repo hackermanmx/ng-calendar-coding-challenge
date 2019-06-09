@@ -17,12 +17,10 @@ import {
 import {DialogComponent} from './dialog/dialog.component';
 import {CoreService} from '../services/core.service';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
-import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 @NgModule({
   imports: [
     HttpClientModule,
-    HttpClientTestingModule,
     CommonModule,
     MatCardModule,
     MatButtonModule,
@@ -47,7 +45,6 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
     DialogComponent,
     ConfirmDialogComponent,
     CommonModule,
-    HttpClientModule,
     MatCardModule,
     MatButtonModule,
     MatRippleModule,
@@ -62,19 +59,12 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
     {
       provide: MatDialogRef,
       useValue: {
-        close: (dialogResult: any) => { }
+        close: (o: any) => { }
       }
     },
     {
       provide: MAT_DIALOG_DATA,
-      useValue: {
-        id: null,
-        reminder: null,
-        date: null,
-        city: null,
-        color: 'blue',
-        isEdit: false
-      } // Add to test if it is used
+      useValue: {}
     }
   ]
 })
@@ -83,7 +73,7 @@ export class SharedModule {
   static forRoot(): ModuleWithProviders {
     return <ModuleWithProviders>{
       ngModule: SharedModule,
-      providers: [CoreService]
+      providers: []
     };
   }
 }

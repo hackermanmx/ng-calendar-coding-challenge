@@ -36,6 +36,10 @@ label {
 }
 
 @media (min-width: 320px){
+  .mat-card-content {
+    max-height: 400px;
+    overflow: hidden auto;
+  }
   .seven-cols .col-day,
   .seven-cols .col-sm-1,
   .seven-cols .col-lg-1  {
@@ -55,6 +59,11 @@ label {
     display: flex;
   }
 
+  .mat-card-content {
+    max-height: 100px;
+    overflow: hidden auto;
+  }
+
   .seven-cols .col-day,
   .seven-cols .col-sm-1,
   .seven-cols .col-lg-1 {
@@ -63,3 +72,14 @@ label {
     *width: 14.285714285714285714285714285714%;
   }
 }
+
+@media only screen and (max-device-width : 1080px) {
+  .calendar-wrapper {
+    li {
+      button {
+        opacity: 1 !important;
+      }
+    }
+  }
+}
+

@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {DialogComponent} from './common/dialog/dialog.component';
 import {format, getMonth} from 'date-fns';
-import {CoreService} from './services/core.service';
+import {get, set, Store} from 'idb-keyval';
 import {ConfirmDialogComponent} from './common/confirm-dialog/confirm-dialog.component';
 
 @Component({
@@ -30,6 +30,7 @@ export class AppComponent implements OnInit {
   };
   lastEvent = null;
   snackbarFormat = 'MMMM DD';
+  store = new Store('reminders-db', 'reminders-store');
 
   static sortEvents(a, b) {
     a = new Date(a.form.date).getTime();
@@ -58,14 +59,14 @@ export class AppComponent implements OnInit {
       /* Previous month dates (if month does not start on Sunday) */
       if (i < startDay) {
         date = new Date(year, month - 1, prevMonthDay);
-        prevMonthDay = prevMonthDay + 1
+        prevMonthDay = prevMonthDay + 1;
         /* Next month dates (if month does not end on Saturday) */
       } else if (i > currentMonthTotalDays + (startDay - 1)) {
         date = new Date(year, month + 1, nextMonthDay);
-        nextMonthDay = nextMonthDay + 1
+        nextMonthDay = nextMonthDay + 1;
         /* Current month dates. */
       } else {
-        date = new Date(year, month, (i - startDay) + 1)
+        date = new Date(year, month, (i - startDay) + 1);
       }
 
       dates.push({ date: date, events: []});
@@ -74,7 +75,12 @@ export class AppComponent implements OnInit {
     return dates;
   }
 
+  static getActiveReminders(calendar) {
+    return calendar.filter(i => i.events.length);
+  }
+
   constructor(public dialog: MatDialog,
+              public cdr: ChangeDetectorRef,
               public _snackBar: MatSnackBar) { }
 
   ngOnInit() {
@@ -83,6 +89,18 @@ export class AppComponent implements OnInit {
     this.currentMonthYear = format(new Date(), 'MMMM YYYY');
     this.checkMonthButtons();
     this.resetDaysArray();
+    get('reminders', this.store).then((store: any) => {
+      console.log(store);
+      store.forEach(item => {
+        const findDateIndex = this.calendar
+          .findIndex(i => {
+            return i.date.getDate() === item.date.getDate();
+          });
+        // console.log('--', findDateIndex);
+        this.calendar[findDateIndex].events = item.events;
+      });
+    });
+
   }
 
   checkMonthButtons() {
@@ -95,7 +113,7 @@ export class AppComponent implements OnInit {
   }
 
   openDialog(event?, index?: number) {
-    let config = {
+    const config = {
       width: '400px',
       data: {
         form: {
@@ -107,16 +125,20 @@ export class AppComponent implements OnInit {
 
     if (event) { // edit
       this.model = event.events[index].form;
-      // this.model.date = startOfDay(event.date).toISOString();
       this.model.isEdit = true;
       this.lastEvent = {
         date: event.date,
         index,
         event: event.events[index] };
     } else { // add
-      this.model.date = new Date().toISOString();
-      this.model.id = genID();
-      this.model.isEdit = false;
+      this.model = {
+        id: genID(),
+        reminder: null,
+        date: new Date().toISOString(),
+        city: null,
+        color: 'blue',
+        isEdit: false
+      };
     }
 
     config.data.form = this.model;
@@ -125,32 +147,30 @@ export class AppComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.form) {
         const eventDate = new Date(result.form.date);
-        let findDateIndex, evts, lastEvt, msg;
+        let findDateIndex, msg;
         if (result.form.isEdit) {
           // check if date changed when edited
-          findDateIndex = this.calendar.findIndex(i => i.events.findIndex(o => o.id === this.lastEvent.event.id) > -1);
+          findDateIndex = this.calendar.findIndex(i =>
+            i.events.findIndex(o => o.form.id === this.lastEvent.event.form.id) > -1);
           if (new Date(this.lastEvent.date).getDate() !== eventDate.getDate()) {
             const findNewDateIndex = this.findDateOfEvent(eventDate);
-            this.calendar[findDateIndex].events.splice(this.lastEvent.index, 1);
             this.calendar[findNewDateIndex].events.push(result);
+            this.calendar[findDateIndex].events.splice(this.lastEvent.index, 1);
           }
-          evts = this.calendar[findDateIndex].events;
-          lastEvt = evts[evts.length - 1];
-          msg = `Reminder "${lastEvt.form.reminder}" in ${format(lastEvt.form.date, this.snackbarFormat)} is updated`;
+          msg = `Reminder updated`;
           this.showNotification(msg, 'Saved');
 
         } else {
           findDateIndex = this.findDateOfEvent(eventDate);
           if (findDateIndex > -1) {
             this.calendar[findDateIndex].events.push(result);
-            evts = this.calendar[findDateIndex].events;
-            lastEvt = evts[evts.length - 1];
-            msg = `A Reminder "${lastEvt.form.reminder}" is set for ${format(lastEvt.form.date, this.snackbarFormat)}`;
+                msg = `A Reminder saved`;
             this.showNotification(msg, 'Added');
           }
         }
 
         this.calendar[findDateIndex].events.sort(AppComponent.sortEvents);
+        set('reminders', AppComponent.getActiveReminders(this.calendar), this.store).then();
 
         this.model = {
           id: null,
@@ -160,6 +180,8 @@ export class AppComponent implements OnInit {
           color: 'blue',
           isEdit: false
         };
+
+        this.cdr.detectChanges();
       }
     });
   }
@@ -169,7 +191,9 @@ export class AppComponent implements OnInit {
   }
 
   removeEvent(cIndex: number, evtIndex: number) {
+    this.showNotification(`"${this.calendar[cIndex].events[evtIndex].form.reminder}" deleted!`, 'Done');
     this.calendar[cIndex].events.splice(evtIndex, 1).sort(AppComponent.sortEvents);
+    set('reminders', AppComponent.getActiveReminders(this.calendar), this.store).then();
   }
 
   openConfirmDialog(index: number) {
