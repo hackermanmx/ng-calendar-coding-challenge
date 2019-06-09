@@ -4,42 +4,31 @@ import {HttpClientModule} from '@angular/common/http';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-  MatChipsModule,
-  MatIconModule,
-  MatNativeDateModule,
   MatSelectModule,
-  MatDividerModule,
-  MatDatepickerModule,
-  MatListModule,
   MatInputModule,
-  MatToolbarModule,
   MatCardModule,
   MatButtonModule,
   MatRippleModule,
   MatSnackBarModule,
-  MatDialogModule, MatDialogRef, MAT_DIALOG_DATA
+  MatDialogModule,
+  MatDialogRef, MAT_DIALOG_DATA
 } from '@angular/material';
 
 import {DialogComponent} from './dialog/dialog.component';
 import {CoreService} from '../services/core.service';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 @NgModule({
   imports: [
     HttpClientModule,
+    HttpClientTestingModule,
     CommonModule,
-    MatToolbarModule,
     MatCardModule,
     MatButtonModule,
-    MatChipsModule,
-    MatIconModule,
-    MatNativeDateModule,
-    MatDatepickerModule,
     MatRippleModule,
-    MatListModule,
     MatSelectModule,
     MatInputModule,
-    MatDividerModule,
     MatDialogModule,
     MatSnackBarModule,
     AngularFontAwesomeModule,
@@ -58,17 +47,12 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
     DialogComponent,
     ConfirmDialogComponent,
     CommonModule,
+    HttpClientModule,
     MatCardModule,
     MatButtonModule,
-    MatChipsModule,
-    MatIconModule,
-    MatNativeDateModule,
-    MatDatepickerModule,
     MatRippleModule,
-    MatListModule,
     MatSelectModule,
     MatInputModule,
-    MatDividerModule,
     MatDialogModule,
     MatSnackBarModule,
     AngularFontAwesomeModule
@@ -83,7 +67,14 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
     },
     {
       provide: MAT_DIALOG_DATA,
-      useValue: {} // Add to test if it is used
+      useValue: {
+        id: null,
+        reminder: null,
+        date: null,
+        city: null,
+        color: 'blue',
+        isEdit: false
+      } // Add to test if it is used
     }
   ]
 })
@@ -92,7 +83,7 @@ export class SharedModule {
   static forRoot(): ModuleWithProviders {
     return <ModuleWithProviders>{
       ngModule: SharedModule,
-      providers: []
+      providers: [CoreService]
     };
   }
 }

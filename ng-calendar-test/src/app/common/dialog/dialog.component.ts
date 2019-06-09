@@ -18,13 +18,13 @@ export class DialogComponent implements OnInit {
               @Optional() @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit() {
-    if (this.data.form.city) {
+    if (this.data && this.data.form && this.data.form.city) {
       this.getWeather();
     }
   }
 
   getWeather() {
-    if (this.data.form.city) {
+    if (this.data && this.data.form && this.data.form.city) {
       this.isQuerying = true;
       const setSpinnerOff = () => {
         this.isQuerying = false;
