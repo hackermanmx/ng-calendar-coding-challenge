@@ -3,7 +3,28 @@
 @import '~bootstrap/scss/bootstrap-grid';
 @import '~bootstrap/scss/bootstrap';
 
+body {
+  font-family: Roboto,Helvetica,Arial,sans-serif;
+}
+
+::-webkit-scrollbar {
+  background: transparent;
+  height: 8px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  border: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  background: #dadce0;
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+  min-height: 40px;
+}
+
 * {
+  text-rendering: geometricPrecision;
   &:active,
   :focus {
     outline: none !important;
@@ -38,7 +59,7 @@ label {
   .seven-cols .col-sm-1,
   .seven-cols .col-lg-1 {
     width: 14.285714285714285714285714285714%;
-    min-height: 75px;
+    min-height: 125px;
     *width: 14.285714285714285714285714285714%;
   }
 }

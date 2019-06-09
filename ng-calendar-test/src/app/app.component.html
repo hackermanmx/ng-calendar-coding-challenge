@@ -1,8 +1,8 @@
 <header class="d-flex justify-content-center mt-3">
-  <h1>Ng Calendar</h1>
+  <h1>My Reminders</h1>
 </header>
 
-<section class="container">
+<section class="container-fluid px-2">
   <div class="row justify-content-center month-buttons">
     <!--<button mat-raised-button color="accent" (click)="goToPrevious()" [disabled]='shouldDisablePrev'>-->
       <!--<fa [name]="faChevronLeft"></fa>-->
@@ -13,34 +13,52 @@
     <!--</button>-->
   </div>
 
+  <div class="text-center my-3">
+    <button mat-raised-button class="text-capitalize" (click)="openDialog()" >
+      <fa name="plus" class="mr-3 text-info"></fa>
+      New Reminder
+    </button>
+  </div>
+
   <div class="border border-light">
     <div class="row week-header">
       <label *ngFor="let day of weekDays" class="col">{{day}}</label>
     </div>
 
     <div class="row seven-cols calendar-wrapper">
-      <mat-card *ngFor="let day of days; let i = index" class="col-day"
-        [ngClass]="{
-          'weekend': i % 7 === 0 || i % 7 === 6
-        }">
+      <mat-card *ngFor="let item of calendar; let i = index" class="col-day"
+        [ngClass]="{ 'weekend': i % 7 === 0 || i % 7 === 6 }">
+
         <mat-card-header>
           <mat-card-title
             [ngClass]="{
-              'text-muted': day.getMonth() != selectedMonth.getMonth(),
-              'text-info': !(day.getMonth() != selectedMonth.getMonth()) && (i % 7 === 0 || i % 7 === 6)
-            }">{{day.getDate()}}</mat-card-title>
+              'text-muted': item.date.getMonth() != selectedMonth.getMonth(),
+              'text-info': !(item.date.getMonth() != selectedMonth.getMonth()) && (i % 7 === 0 || i % 7 === 6)
+            }">{{item.date.getDate()}}</mat-card-title>
           <mat-card-subtitle></mat-card-subtitle>
         </mat-card-header>
+
         <mat-card-content>
-          <mat-chip-list #chipList>
-            <mat-chip *ngIf="day.events >= 1">
-              {{day.events}}
-            </mat-chip>
-          </mat-chip-list>
+          <ul class="list-unstyled">
+            <li *ngFor="let ev of item.events; let evtIndex = index"
+                      (click)="openDialog(item, evtIndex)"
+                      class="list-inline-item w-100 {{ev.form.color}}">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span [ngStyle]="{'background': ev.form.color}" class="pin mx-2"></span>
+                  <span class="mr-2">{{ev.form.date | date:'hh:mm a'}}</span>
+                  <span>{{ev.form.reminder}}</span>
+                </div>
+                <button (click)="removeEvent(i, evtIndex)">
+                  <fa name="times" class="text-danger"></fa>
+                </button>
+              </div>
+            </li>
+          </ul>
         </mat-card-content>
+
       </mat-card>
     </div>
   </div>
-
 </section>
 
