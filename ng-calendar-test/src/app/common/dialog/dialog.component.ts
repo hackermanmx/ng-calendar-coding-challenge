@@ -8,23 +8,26 @@ import {CoreService} from '../../services/core.service';
   styleUrls: ['./dialog.component.scss']
 })
 export class DialogComponent implements OnInit {
-  standAlone = { standAlone:true };
+  standAlone = { standAlone: true };
   isQuerying = false;
   forecast = null;
+  dataWrapper = null;
   colors = ['blue', 'red', 'green', 'purple', 'gray', 'brown', 'orange'];
 
   constructor(@Optional() public dialogRef: MatDialogRef<DialogComponent>,
               public coreService: CoreService,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: any) { }
+              @Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
+    this.dataWrapper = JSON.parse(JSON.stringify(this.data));
+  }
 
   ngOnInit() {
-    if (this.data && this.data.form && this.data.form.city) {
+    if (this.data.form.city) {
       this.getWeather();
     }
   }
 
   getWeather() {
-    if (this.data && this.data.form && this.data.form.city) {
+    if (this.data.form.city) {
       this.isQuerying = true;
       const setSpinnerOff = () => {
         this.isQuerying = false;
@@ -49,6 +52,7 @@ export class DialogComponent implements OnInit {
 
   onCancel(form) {
     form.reset();
+    // this.data = this.dataWrapper;
     this.dialogRef.close();
   }
 }

@@ -36,7 +36,6 @@
               'text-muted': item.date.getMonth() != selectedMonth.getMonth(),
               'text-info': !(item.date.getMonth() != selectedMonth.getMonth()) && (i % 7 === 0 || i % 7 === 6)
             }">
-
             <span>{{item.date.getDate()}}</span>
             <button *ngIf="item.events.length" class="btn-delete text-danger" (click)="openConfirmDialog(i)">
               <fa name="trash"></fa>
@@ -51,10 +50,10 @@
                       (click)="openDialog(item, evtIndex)"
                       class="list-inline-item w-100 {{ev.form.color}}">
               <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex justify-content-between align-items-center text-truncate">
                   <span [ngStyle]="{'background': ev.form.color}" class="pin mx-2"></span>
-                  <span class="mr-2">{{ev.form.date | date:'hh:mm a'}}</span>
-                  <span>{{ev.form.reminder}}</span>
+                  <span class="mr-2 text-truncate">{{ev.form.date | date:'hh:mm a'}}</span>
+                  <span class="text-truncate">{{ev.form.reminder}}</span>
                 </div>
                 <button (click)="removeEvent(i, evtIndex)">
                   <fa name="times" class="text-danger"></fa>

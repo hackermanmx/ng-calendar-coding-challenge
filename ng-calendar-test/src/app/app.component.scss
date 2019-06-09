@@ -51,7 +51,7 @@
     }
 
     &:hover {
-      button {
+      button.btn-delete {
         opacity: 1;
       }
     }
@@ -74,8 +74,13 @@
     &.green:hover { background: green; }
     &.purple:hover { background: purple; }
     &.gray:hover { background: gray; }
-    &.yellow:hover { background: yellow; }
+    &.brown:hover { background: brown; }
     &.orange:hover { background: orange; }
+
+    .time {
+      min-width: 70px;
+      display: inline-block;
+    }
 
     &:hover {
       color: white;

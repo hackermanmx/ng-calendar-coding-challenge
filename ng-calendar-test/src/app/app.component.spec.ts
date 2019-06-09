@@ -5,10 +5,10 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA, MatDialog
 } from '@angular/material';
-import {DialogComponent} from "./common/dialog/dialog.component";
-import {SharedModule} from "./common";
-import {BrowserDynamicTestingModule} from "@angular/platform-browser-dynamic/testing";
-import {BrowserAnimationsModule, NoopAnimationsModule} from "@angular/platform-browser/animations";
+import {DialogComponent} from './common/dialog/dialog.component';
+import {SharedModule} from './common';
+import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/testing';
+import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('AppComponent', () => {
   let dialog: MatDialog;
@@ -53,7 +53,7 @@ describe('AppComponent', () => {
 
   describe('passing in data', () => {
     it('should be able to pass in data', () => {
-      let config = {
+      const config = {
         data: {
           form: {
             id: null,
@@ -67,8 +67,8 @@ describe('AppComponent', () => {
       };
 
       const currentDate = new Date();
-      let calendar = AppComponent.getMonthInfo(currentDate.getFullYear(), currentDate.getMonth() + 1);
-      let instance = dialog.open(DialogComponent, config).componentInstance;
+      const calendar = AppComponent.getMonthInfo(currentDate.getFullYear(), currentDate.getMonth() + 1);
+      const instance = dialog.open(DialogComponent, config).componentInstance;
       expect(instance.data.form.reminder).toBe(config.data.form.reminder);
       expect(instance.data.form.date).toBe(config.data.form.date);
       expect(instance.data.form.city).toBe(config.data.form.city);
@@ -87,7 +87,7 @@ describe('AppComponent', () => {
 
     it('should default to null if no data is passed', () => {
       expect(() => {
-        let dialogRef = dialog.open(DialogComponent);
+        const dialogRef = dialog.open(DialogComponent);
         expect(dialogRef.componentInstance.data).toBeNull();
       }).not.toThrow();
     });
