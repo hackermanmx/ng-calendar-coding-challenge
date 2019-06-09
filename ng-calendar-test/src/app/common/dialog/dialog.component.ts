@@ -18,7 +18,6 @@ export class DialogComponent implements OnInit {
               @Optional() @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit() {
-    console.log(this.data);
     if (this.data.form.city) {
       this.getWeather();
     }
@@ -33,8 +32,8 @@ export class DialogComponent implements OnInit {
       this.coreService.getWeather(this.data.form.city)
         .subscribe((res: any) => {
           this.forecast = {
-            min: (res.main.temp_min - 273.15).toFixed(0) + 'F°',
-            max: (res.main.temp_max - 273.15).toFixed(0) + 'F°',
+            min: (res.main.temp_min - 273.15).toFixed(0) + ' C°',
+            max: (res.main.temp_max - 273.15).toFixed(0) + ' C°',
             icon: res.weather[0].icon
           };
         }, () => {

@@ -1,9 +1,10 @@
-.container{
-  padding-top:20px;
-}
-
-.month-buttons{
-  padding-bottom: 20px;
+@mixin simple-btn () {
+  opacity: 0;
+  line-height: 1;
+  font-size: 18px;
+  border: none;
+  background: transparent;
+  outline: none;
 }
 
 .mat-card {
@@ -19,21 +20,40 @@
   }
 }
 
+::ng-deep {
+  .mat-card-header-text {
+    width: 100%;
+  }
+}
+
+.mat-card-header {
+  .mat-card-title {
+    width: 100%;
+    font-size: .8rem;
+  }
+}
+
 .calendar-wrapper {
   .weekend {
     background-color: #f1f1f1;
   }
+
   .text-muted {
     color: #afb8bf !important;
   }
 
   .mat-card {
     box-shadow: 0 2px 0 -9px rgba(0,0,0,.5), 0 1px 1px 0 rgba(0,0,0,.35), 0 1px 3px 0 rgba(0,0,0,.12);
-  }
+    transition: all .3s ease;
+    button {
+      opacity: 0;
+      @include simple-btn();
+    }
 
-  .mat-card-header {
-    .mat-card-title {
-      font-size: .8rem;
+    &:hover {
+      button {
+        opacity: 1;
+      }
     }
   }
 
@@ -64,12 +84,7 @@
       }
     }
     button {
-      opacity: 0;
-      line-height: 1;
-      font-size: 18px;
-      border: none;
-      background: transparent;
-      outline: none;
+      @include simple-btn();
     }
   }
 }

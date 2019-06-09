@@ -29,12 +29,19 @@
       <mat-card *ngFor="let item of calendar; let i = index" class="col-day"
         [ngClass]="{ 'weekend': i % 7 === 0 || i % 7 === 6 }">
 
-        <mat-card-header>
+        <mat-card-header class="w-100">
           <mat-card-title
+            class="d-flex justify-content-between w-100"
             [ngClass]="{
               'text-muted': item.date.getMonth() != selectedMonth.getMonth(),
               'text-info': !(item.date.getMonth() != selectedMonth.getMonth()) && (i % 7 === 0 || i % 7 === 6)
-            }">{{item.date.getDate()}}</mat-card-title>
+            }">
+
+            <span>{{item.date.getDate()}}</span>
+            <button *ngIf="item.events.length" class="btn-delete text-danger" (click)="openConfirmDialog(i)">
+              <fa name="trash"></fa>
+            </button>
+          </mat-card-title>
           <mat-card-subtitle></mat-card-subtitle>
         </mat-card-header>
 
