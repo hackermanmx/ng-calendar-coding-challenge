@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {DialogComponent} from './common/dialog/dialog.component';
 import {
 format, subMonths, addMonths, getMonth,
 addDays, endOfMonth, startOfYear, endOfYear,
 getYear, getDay, setMonth, getDaysInMonth,
 startOfDay, subHours, addHours, subDays
 } from 'date-fns';
-
+import {CoreService} from "./services/core.service";
 
 @Component({
   selector: 'app-root',
@@ -20,47 +22,24 @@ export class AppComponent implements OnInit {
   currentMonthYear: String;
   shouldDisablePrev: Boolean;
   shouldDisableNext: Boolean;
-  days: any[];
+  calendar: any[];
+  model = {
+    id: null,
+    reminder: null,
+    date: null,
+    city: null,
+    color: 'blue',
+    isEdit: false
+  };
+  lastEvent = null;
 
-  static getMonthInfo(year, oneBasedMonth) {
-    const month = oneBasedMonth - 1; /* month given to Date() starts at 0 = January */
-    const startDate = new Date(year, month, 1);
-    const endDate = new Date(year, month + 1, 0); /* 0 `day` gets last day from prior month */
-
-    /* result of getDay(): 0 means Sunday and 6 means Saturday */
-    const startDay = startDate.getDay();
-    /* last day number = total days in current month */
-    const currentMonthTotalDays = endDate.getDate();
-    const totalWeeks = Math.ceil((currentMonthTotalDays + startDay) / 7);
-
-    const prevMonthEndDate = new Date(year, month, 0);
-    let prevMonthDay = prevMonthEndDate.getDate() - startDay + 1;
-    let nextMonthDay = 1;
-    const dates = [];
-
-    for (let i = 0; i < (totalWeeks * 7); i += 1) {
-      let date;
-      /* Previous month dates (if month does not start on Sunday) */
-      if (i < startDay) {
-        date = new Date(year, month - 1, prevMonthDay);
-        prevMonthDay = prevMonthDay + 1
-        /* Next month dates (if month does not end on Saturday) */
-      } else if (i > currentMonthTotalDays + (startDay - 1)) {
-        date = new Date(year, month + 1, nextMonthDay);
-        nextMonthDay = nextMonthDay + 1
-        /* Current month dates. */
-      } else {
-        date = new Date(year, month, (i - startDay) + 1)
-      }
-
-      // dates.push(format(date, 'dddd MMMM DD'));
-      dates.push(date);
-    }
-
-    return dates;
+  static sortEvents(a, b) {
+    a = new Date(a.form.date).getTime();
+    b = new Date(b.form.date).getTime();
+    return a - b;
   }
 
-  constructor() { }
+  constructor(public dialog: MatDialog) { }
 
   ngOnInit() {
     const currentDate = new Date();
@@ -68,13 +47,92 @@ export class AppComponent implements OnInit {
     this.currentMonthYear = format(new Date(), 'MMMM YYYY');
     this.checkMonthButtons();
     this.resetDaysArray();
-
-    // console.log(this.getMonthInfo(2019, 6));
   }
 
   checkMonthButtons() {
     this.shouldDisablePrev = getMonth(this.selectedMonth) === 0;
     this.shouldDisableNext = getMonth(this.selectedMonth) === 11;
+  }
+
+  resetDaysArray(): void {
+    this.calendar = CoreService.getMonthInfo(this.selectedMonth.getFullYear(), this.selectedMonth.getMonth() + 1);
+  }
+
+  openDialog(event?, index?: number) {
+    let config = {
+      width: '400px',
+      data: {
+        form: {
+          color: 'blue'
+        }
+      }
+    };
+    const genID = () => Date.now().toString(36);
+
+    if (event) { // edit
+      this.model = event.events[index].form;
+      // this.model.date = startOfDay(event.date).toISOString();
+      this.model.isEdit = true;
+      this.lastEvent = {
+        date: event.date,
+        index,
+        event: event.events[index] };
+    } else { // add
+      this.model.date = new Date().toISOString();
+      this.model.id = genID();
+      this.model.isEdit = false;
+    }
+
+    config.data.form = this.model;
+    const dialogRef = this.dialog.open(DialogComponent, config);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.form) {
+        const eventDate = new Date(result.form.date);
+        let findDateIndex;
+        if (result.form.isEdit) {
+          // check if date changed
+          findDateIndex = this.calendar.findIndex(i => i.events.findIndex(o => o.id === this.lastEvent.event.id) > -1);
+          if (new Date(this.lastEvent.date).getDate() === eventDate.getDate()) {
+            console.log(1);
+            // this.calendar[findDateIndex].events.sort(AppComponent.sortEvents);
+          } else {
+            console.log(2);
+            const findNewDateIndex = this.findDateOfEvent(eventDate);
+            this.calendar[findDateIndex].events.splice(this.lastEvent.index, 1);
+            this.calendar[findNewDateIndex].events.push(result);
+          }
+
+        } else {
+
+          findDateIndex = this.findDateOfEvent(eventDate);
+
+          if (findDateIndex > -1) {
+            this.calendar[findDateIndex].events.push(result);
+            // this.calendar[findDateIndex].events.sort(AppComponent.sortEvents);
+          }
+        }
+
+        this.calendar[findDateIndex].events.sort(AppComponent.sortEvents);
+
+        this.model = {
+          id: null,
+          reminder: null,
+          date: null,
+          city: null,
+          color: 'blue',
+          isEdit: false
+        };
+      }
+    });
+  }
+
+  findDateOfEvent(eventDate: Date) {
+    return this.calendar.findIndex(i => i.date.getDate() === eventDate.getDate());
+  }
+
+  removeEvent(cIndex: number, evtIndex: number) {
+    this.calendar[cIndex].events.splice(evtIndex, 1).sort(AppComponent.sortEvents);
   }
 
   // goToPrevious() {
@@ -95,7 +153,4 @@ export class AppComponent implements OnInit {
   //   }
   // }
 
-  resetDaysArray(): void {
-    this.days = AppComponent.getMonthInfo(this.selectedMonth.getFullYear(), this.selectedMonth.getMonth() + 1);
-  }
 }

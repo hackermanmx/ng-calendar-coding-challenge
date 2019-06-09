@@ -1,0 +1,39 @@
+<h1 mat-dialog-title>Reminder</h1>
+<div mat-dialog-content>
+  <form #f="ngForm">
+    <mat-form-field>
+      <textarea placeholder="Add a title" name="r" required matInput [(ngModel)]="data.form.reminder" [ngModelOptions]="standAlone" maxlength="30"></textarea>
+    </mat-form-field>
+    <div class="d-flex align-items-center">
+      <mat-form-field [ngClass]="{ 'w-50': forecast, 'w-100': !forecast }">
+        <input placeholder="Enter city"
+               (blur)="getWeather()"
+               matInput name="c" [(ngModel)]="data.form.city" required [ngModelOptions]="standAlone" type="text">
+      </mat-form-field>
+      <div class="d-flex align-items-center flex-column w-50" *ngIf="forecast">
+        <div>{{forecast.min}} to {{forecast.max}}</div>
+        <img [src]="'http://openweathermap.org/img/w/'+forecast.icon+'.png'" alt="forecast icon" width="40" height="40">
+      </div>
+    </div>
+    <mat-form-field>
+      <input placeholder="Enter datetime" name="d" required matInput
+             [ngModel]="data.form.date | date:'yyyy-MM-ddTHH:mm'"
+             (ngModelChange)="data.form.date = $event"
+             [ngModelOptions]="standAlone" type="datetime-local">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label [ngStyle]="{'color': data.form.color}">Select a theme</mat-label>
+      <mat-select [(value)]="data.form.color" name="colors" required>
+        <mat-option *ngFor="let color of colors" [value]="color" [ngStyle]="{'color': color}">
+          {{color}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-between"
+  [ngClass]="{'justify-content-between': data.form.isEdit, 'justify-content-end': !data.form.isEdit}">
+  <button *ngIf="!data.form.isEdit" mat-raised-button class="mat-warn" (click)="onCancel(f)">Cancel</button>
+  <button mat-stroked-button [mat-dialog-close]="data"
+          [disabled]="!f.valid">{{data.form.isEdit ? 'Done' : 'Add'}}</button>
+</div>

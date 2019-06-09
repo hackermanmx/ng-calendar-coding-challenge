@@ -28,32 +28,48 @@
   }
 
   .mat-card {
-    box-shadow: 0 2px 0px -9px rgba(0,0,0,.5), 0 1px 1px 0 rgba(0,0,0,.35), 0 1px 3px 0 rgba(0,0,0,.12);
-    cursor: pointer;
-
-    background-position: center;
-    transition: background 0.8s;
-
-    &:hover {
-      background: #47a7f5 radial-gradient(circle, transparent 1%, #47a7f5 1%) center/15000%;
-
-      .mat-card-header {
-        .mat-card-title {
-          color: white !important;
-        }
-      }
-    }
-
-    &:active {
-      background-color: #6eb9f7;
-      background-size: 100%;
-      transition: background 0s;
-    }
+    box-shadow: 0 2px 0 -9px rgba(0,0,0,.5), 0 1px 1px 0 rgba(0,0,0,.35), 0 1px 3px 0 rgba(0,0,0,.12);
   }
 
   .mat-card-header {
     .mat-card-title {
       font-size: .8rem;
+    }
+  }
+
+  .pin {
+    display: inline-block;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+  }
+
+  li {
+    background: transparent;
+    cursor: pointer;
+    transition: all .3s ease;
+
+    &.blue:hover { background: blue; }
+    &.red:hover { background: red; }
+    &.green:hover { background: green; }
+    &.purple:hover { background: purple; }
+    &.gray:hover { background: gray; }
+    &.yellow:hover { background: yellow; }
+    &.orange:hover { background: orange; }
+
+    &:hover {
+      color: white;
+      button {
+        opacity: 1;
+      }
+    }
+    button {
+      opacity: 0;
+      line-height: 1;
+      font-size: 18px;
+      border: none;
+      background: transparent;
+      outline: none;
     }
   }
 }
