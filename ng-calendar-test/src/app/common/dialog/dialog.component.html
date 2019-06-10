@@ -17,8 +17,9 @@
     </div>
     <mat-form-field>
       <input placeholder="Enter datetime" name="d" required matInput
+             [min]="minDate" [max]="maxDate"
              [ngModel]="data.form.date | date:'yyyy-MM-ddTHH:mm'"
-             (ngModelChange)="data.form.date = $event"
+             (ngModelChange)="onDateChange($event)"
              [ngModelOptions]="standAlone" type="datetime-local">
     </mat-form-field>
     <mat-form-field>
@@ -31,9 +32,10 @@
     </mat-form-field>
   </form>
 </div>
+
 <div mat-dialog-actions class="d-flex"
   [ngClass]="{'justify-content-between': !data.form.isEdit, 'justify-content-end': data.form.isEdit}">
   <button *ngIf="!data.form.isEdit" mat-raised-button class="mat-warn" (click)="onCancel(f)">Cancel</button>
   <button mat-stroked-button [mat-dialog-close]="data"
-          [disabled]="!f.valid || isQuerying">{{data.form.isEdit ? 'Done' : 'Add'}}</button>
+          [disabled]="!canProceed ? true : (!f.valid || isQuerying)">{{data.form.isEdit ? 'Done' : 'Add'}}</button>
 </div>
