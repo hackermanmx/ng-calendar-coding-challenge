@@ -81,7 +81,7 @@ export class AppComponent implements OnInit {
 
   constructor(public dialog: MatDialog,
               public cdr: ChangeDetectorRef,
-              public _snackBar: MatSnackBar) { }
+              public snackBar: MatSnackBar) { }
 
   ngOnInit() {
     const currentDate = new Date();
@@ -90,15 +90,15 @@ export class AppComponent implements OnInit {
     this.checkMonthButtons();
     this.resetDaysArray();
     get('reminders', this.store).then((store: any) => {
-      console.log(store);
-      store.forEach(item => {
-        const findDateIndex = this.calendar
-          .findIndex(i => {
-            return i.date.getDate() === item.date.getDate();
-          });
-        // console.log('--', findDateIndex);
-        this.calendar[findDateIndex].events = item.events;
-      });
+      if (store && store.length) {
+        store.forEach(item => {
+          const findDateIndex = this.calendar
+            .findIndex(i => {
+              return i.date.getDate() === item.date.getDate();
+            });
+          this.calendar[findDateIndex].events = item.events;
+        });
+      }
     });
 
   }
@@ -211,7 +211,7 @@ export class AppComponent implements OnInit {
   }
 
   showNotification(message: string, action: string) {
-    this._snackBar.open(message, action, {
+    this.snackBar.open(message, action, {
       duration: 3000,
     });
   }
