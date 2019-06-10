@@ -13,8 +13,6 @@ import {ConfirmDialogComponent} from './common/confirm-dialog/confirm-dialog.com
 })
 export class AppComponent implements OnInit {
   weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  // faChevronLeft = 'chevron-left';
-  // faChevronRight = 'chevron-right';
   selectedMonth: Date;
   currentMonthYear: String;
   shouldDisablePrev: Boolean;
@@ -170,7 +168,7 @@ export class AppComponent implements OnInit {
         }
 
         this.calendar[findDateIndex].events.sort(AppComponent.sortEvents);
-        set('reminders', AppComponent.getActiveReminders(this.calendar), this.store).then();
+        this.save();
 
         this.model = {
           id: null,
@@ -193,7 +191,7 @@ export class AppComponent implements OnInit {
   removeEvent(cIndex: number, evtIndex: number) {
     this.showNotification(`"${this.calendar[cIndex].events[evtIndex].form.reminder}" deleted!`, 'Done');
     this.calendar[cIndex].events.splice(evtIndex, 1).sort(AppComponent.sortEvents);
-    set('reminders', AppComponent.getActiveReminders(this.calendar), this.store).then();
+    this.save();
   }
 
   openConfirmDialog(index: number) {
@@ -206,8 +204,13 @@ export class AppComponent implements OnInit {
         this.calendar[result.index].events.length = 0;
         const msg = `Reminders removed for ${format(this.calendar[result.index].date, this.snackbarFormat)}`;
         this.showNotification(msg, 'Deleted');
+        this.save();
       }
     });
+  }
+
+  save() {
+    set('reminders', AppComponent.getActiveReminders(this.calendar), this.store).then();
   }
 
   showNotification(message: string, action: string) {
